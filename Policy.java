@@ -2,128 +2,62 @@ import java.util.*;
 import java.io.*;
 public class Policy{
    static Scanner scan = new Scanner(System.in);
-   static int number;
-   static String provider;
-   static String firstName;
-   static String lastName;
-   static int age;
-   static String smokingStatus;
-   static float height;
-   static float weight;
-   
-   static int smokers = 0;
-   static int nonsmokers = 0;
-   ArrayList<Policy> policies = new ArrayList<Policy>();
+   static ArrayList<PolicyHolder> policies = new ArrayList<PolicyHolder>();
    public static void main(String[] args){
       try 
       {
          File file = new File("Policy.txt");
-                                    
+        
          Scanner inputFile = new Scanner(file);
-               String courseNumber = "", courseName = "", fileInput = " ";
-         double contactHours = 0.0, creditHours = 0.0, totalTuitionCost = 0.0;
+         int p = 0;
          while(inputFile.hasNext())       
          { 
-            number = Integer.parseInt(inputFile.nextLine());
-            provider = inputFile.nextLine();
-            firstName = inputFile.nextLine();
-            lastName = inputFile.nextLine();
-            age = Integer.parseInt(inputFile.nextLine());
-            smokingStatus = inputFile.nextLine();
-            height = Float.parseFloat(inputFile.nextLine());
-            weight = Float.parseFloat(inputFile.nextLine());
+            policies.add(new PolicyHolder());
+            policies.get(p).number = Integer.parseInt(inputFile.nextLine());
+            policies.get(p).provider = inputFile.nextLine();
+            policies.get(p).firstName = inputFile.nextLine();
+            policies.get(p).lastName = inputFile.nextLine();
+            policies.get(p).age = Integer.parseInt(inputFile.nextLine());
+            policies.get(p).smokingStatus = inputFile.nextLine();
+            if(policies.get(p).smokingStatus == "smoker") policies.get(p).smokers++;
+            else policies.get(p).nonsmokers++;
+            policies.get(p).height = Float.parseFloat(inputFile.nextLine());
+            policies.get(p).weight = Float.parseFloat(inputFile.nextLine());
             if(inputFile.hasNext())
             { 
                inputFile.nextLine();
             }
-            
-            prntl("Policy Number: " + number);
-            prntl("Provider Name: " + provider);
-            prntl("Policyholder's First Name: " + firstName);
-            prntl("Policyholder's Last Name: " + lastName);
-            prntl("Policyholder's Age: " + age);
-            prntl("Policyholder's Smoking Status: " + smokingStatus);
-            if(smokingStatus.equals("smoker"))smokers++;
-            else nonsmokers++;
-            prntl("Policyholder's Height: " + height);
-            prntl("Policyholder's Weight: " + weight);
-            prntl("Policyholder's BMI:" + BMI(weight, height));
-            prntl("Policy Price: $" + Price(age, smokingStatus == "smoker", weight, height));
-            prntl("");
-
-         }      
+            p++;
+         }
          inputFile.close();
-               
+
+
+         for (int i = 0; i < policies.size(); i++)
+         {
+            prntl("Policy Number: " + policies.get(i).number);
+            prntl("Provider Name: " + policies.get(i).provider);
+            prntl("Policyholder's First Name: " + policies.get(i).firstName);
+            prntl("Policyholder's Last Name: " + policies.get(i).lastName);
+            prntl("Policyholder's Age: " + policies.get(i).age);
+            prntl("Policyholder's Smoking Status: " + policies.get(i).smokingStatus);
+            prntl("Policyholder's Height: " + policies.get(i).height);
+            prntl("Policyholder's Weight: " + policies.get(i).weight);
+            prntl("Policyholder's BMI:" + policies.get(i).BMI());
+            prntl("Policy Price: $" + policies.get(i).Price());
+            prntl("");
+         }
       }
       catch(IOException ex)
       {
          System.out.println("Something went wrong reading the file: " + ex.getMessage());
       }
       
-      prntl("The number of policies with a smoker is: " + smokers);
-      prntl("The number of policies with a non-smoker is: " + nonsmokers);
+      prntl("The number of policies with a smoker is: " + policies.get(0).smokers);
+      prntl("The number of policies with a non-smoker is: " + policies.get(0).nonsmokers);
       
    }
-   Policy()
-   {
-      number = 0;
-      provider = "Unspeecified";
-      firstName = "Unspecified";
-      lastName = "Unspecified";
-      age = 39; //average age because I didn't know what the defaults should be so they are all approximately the national averages.
-      smokingStatus = "non-smoker";
-      height = 67;
-      weight = 185;
-   }
-   Policy(int number, String provider, String firstName, String lastName, int age, String smokingStatus, float height, float weight)
-   {
-      this.number = number;
-      this.provider = provider;
-      this.firstName = firstName;
-      this.lastName = lastName;
-      this.age = age; 
-      this.smokingStatus = smokingStatus;
-      this.height = height;
-      this.weight = weight;
-   }
-   /**
-   * Calculates the price of a policy.
-   * @param age The age of the policy holder.
-   * @param smokes Weather or not they smoke.
-   * @param w how much they weigh in pounds.
-   * @param h how tall they are in inches.
-   * @return the cost in dollars as a string.
-   */
-   public static String Price(int age, boolean smokes, float w, float h){
-      float fixedFee = 600;
-      float oldFee = age >= 50 ? 75 : 0;
-      float bmi = BMI(w,h);
-      float bmiFee = bmi > 35 ? (bmi-35)*20 : 0;
-      float smokerFee = smokes ? 100 : 0;
-      float totalFee = fixedFee + oldFee + bmiFee;
-      totalFee = (Math.round(totalFee * 100f) / 100f);
-      String totalFeeS = String.valueOf(totalFee);
-      for(int i = 0; i < totalFeeS.length(); i++){
-         if(totalFeeS.charAt(i) == '.'){
-            while(i + 2 >= totalFeeS.length())totalFeeS = totalFeeS + "0";
-         }
-      }
-      return totalFeeS;
-   }
    
-   /**
-   * Calculates the BMI of someone.
-   * @param w how much they weigh in pounds.
-   * @param h how tall they are in inches.
-   * @return BMI.
-   */
-   public static float BMI(float w, float h){
-      return w*702/(h*h);
-   }
-   
-   
-   
-   //Copied IO utilities from previous work.
+    //Copied IO utilities from previous work.
    public static void prnt(String s){
       System.out.print(s); //This is just to make printing things easier to type. If it impacts performance I'd appreciate if you told me in the feedback.
    }
@@ -188,5 +122,4 @@ public class Policy{
       }
       return o;
    }
-
 }
