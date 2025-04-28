@@ -55,6 +55,7 @@ public class PolicyHolder{
       String totalFeeS = Float.toString(totalFee);
       
       return totalFeeS;
+      
    }
    float BMI()
    {
